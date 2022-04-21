@@ -34,7 +34,7 @@ public class MarkdownParse {
             if (closeParen == -1){
                 break;
             }
-            if (exclaim == openBracket - 1) {
+            if (exclaim != -1 || exclaim == openBracket - 1) {
                 currentIndex = closeParen + 1;
                 continue;
             }
