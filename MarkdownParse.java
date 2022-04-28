@@ -12,11 +12,11 @@ public class MarkdownParse {
         // find the next [, then find the ], then find the (, then read link upto next )
         int currentIndex = 0;
         while(currentIndex < markdown.length()) {
-            int exclaim = markdown.indexOf("!", currentIndex);
             int openBracket = markdown.indexOf("[", currentIndex);
             if (openBracket == -1){
                 break;
             }
+            int exclamationPoint = markdown.indexOf("!",currentIndex);
             int closeBracket = markdown.indexOf("]", openBracket);
             if (closeBracket == -1){
                 break;
@@ -25,33 +25,22 @@ public class MarkdownParse {
             if (openParen == -1){
                 break;
             }
-            if (openParen != closeBracket + 1) {
-                int closeParen = markdown.indexOf(")", openParen);
-                if (closeParen == -1) {
-                    break;
-                }
-                currentIndex = closeParen + 1;
-                continue;
-            }
             int closeParen = markdown.indexOf(")", openParen);
             if (closeParen == -1){
                 break;
             }
-            if (exclaim != -1 && exclaim == openBracket - 1) {
-                currentIndex = closeParen + 1;
-                continue;
+            if (exclamationPoint != openBracket - 1 && openParen == closeBracket + 1) {
+                if (markdown.substring(openParen + 1, closeParen).contains(" ") == false) {
+                    toReturn.add(markdown.substring(openParen + 1, closeParen));
+                }
             }
-            if (openBracket == closeBracket - 1) {
-                currentIndex = closeBracket + 1;
-                continue;
-            }
-            toReturn.add(markdown.substring(openParen + 1, closeParen));
-            currentIndex = closeParen + 1;
+            currentIndex = closeParen + 1;   
         }
-
+        if (toReturn.size() == 0) {
+            toReturn.add("no links found");
+        }
         return toReturn;
     }
-
 
     public static void main(String[] args) throws IOException {
         Path fileName = Path.of(args[0]);
